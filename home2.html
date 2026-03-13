@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>NeuroNotes - Home</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins',sans-serif;
+}
+
+body{
+background:linear-gradient(120deg,#667eea,#764ba2);
+min-height:100vh;
+color:white;
+}
+
+/* Navbar */
+
+nav{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:20px 60px;
+}
+
+.logo{
+font-size:26px;
+font-weight:600;
+}
+
+nav ul{
+list-style:none;
+display:flex;
+gap:25px;
+align-items:center;
+}
+
+nav ul li a{
+text-decoration:none;
+color:white;
+font-weight:400;
+}
+
+/* Exam Mode Highlight */
+
+.exam-highlight{
+background:#ffcc00;
+color:black !important;
+padding:8px 18px;
+border-radius:25px;
+font-weight:600;
+}
+
+/* Hero Section */
+
+.hero{
+height:70vh;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+text-align:center;
+}
+
+.hero h1{
+font-size:55px;
+margin-bottom:20px;
+}
+
+.hero p{
+font-size:20px;
+margin-bottom:40px;
+opacity:0.9;
+}
+
+/* Search */
+
+.search-box{
+display:flex;
+background:white;
+border-radius:40px;
+overflow:hidden;
+width:500px;
+box-shadow:0 10px 30px rgba(0,0,0,0.2);
+}
+
+.search-box input{
+flex:1;
+border:none;
+padding:18px;
+font-size:16px;
+outline:none;
+}
+
+.search-box button{
+border:none;
+background:#4f46e5;
+color:white;
+padding:18px 30px;
+cursor:pointer;
+}
+
+/* Subjects */
+
+.subjects{
+padding:60px;
+}
+
+.subjects h2{
+text-align:center;
+margin-bottom:40px;
+font-size:32px;
+}
+
+.subject-grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+gap:30px;
+}
+
+.subject-card{
+background:rgba(255,255,255,0.1);
+border-radius:20px;
+padding:30px;
+text-align:center;
+backdrop-filter:blur(10px);
+border:1px solid rgba(255,255,255,0.2);
+transition:0.3s;
+cursor:pointer;
+}
+
+.subject-card:hover{
+transform:translateY(-10px);
+background:rgba(255,255,255,0.2);
+}
+
+footer{
+text-align:center;
+padding:20px;
+opacity:0.8;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- Navbar -->
+
+<nav>
+
+<div class="logo">NeuroNotes</div>
+
+<ul>
+<li><a href="index.html">Home</a></li>
+<li><a href="dashboard2.html">Dashboard</a></li>
+<li><a href="subject2.html">Subjects</a></li>
+<li><a href="upload.html">Upload</a></li>
+<li><a href="resource.html">Resources</a></li>
+<li><a href="signup.html">Login</a></li>
+</ul>
+
+</nav>
+<!-- Hero -->
+
+<section class="hero">
+
+<h1>Find Study Resources Instantly</h1>
+
+<p>Notes • PPTs • Previous Papers • Study Materials</p>
+
+<div class="search-box">
+<input type="text" id="searchInput" placeholder="Search notes, PPTs, question papers">
+<button onclick="searchSubjects()">Search</button>
+</div>
+
+</section>
+
+<!-- Subjects -->
+
+<section class="subjects">
+
+<h2>Available Subjects</h2>
+
+<div class="subject-grid" id="subjectContainer">
+
+</div>
+
+</section>
+
+<footer>
+<p>© 2026 NeuroNotes</p>
+</footer>
+
+<script>
+
+/* Example uploaded resources */
+
+let resources = [
+
+{title:"DBMS Notes Unit 1",subject:"DBMS"},
+{title:"SQL Queries PPT",subject:"DBMS"},
+{title:"Python Basics",subject:"Python Programming"},
+{title:"Machine Learning Intro",subject:"Machine Learning"},
+{title:"HTML CSS Notes",subject:"Web Technology"}
+
+];
+
+/* Get unique subjects */
+
+let subjects = [...new Set(resources.map(r => r.subject))];
+
+let container = document.getElementById("subjectContainer");
+
+/* Display Subjects */
+
+function displaySubjects(list){
+
+container.innerHTML="";
+
+list.forEach(subject => {
+
+let card=document.createElement("div");
+
+card.className="subject-card";
+
+card.innerText=subject;
+
+/* open subject page */
+
+card.onclick=function(){
+
+localStorage.setItem("selectedSubject",subject);
+
+window.location.href="subject2.html";
+
+}
+
+container.appendChild(card);
+
+});
+
+}
+
+displaySubjects(subjects);
+
+/* Search */
+
+function searchSubjects(){
+
+let text=document.getElementById("searchInput").value.toLowerCase();
+
+let filtered=subjects.filter(sub =>
+sub.toLowerCase().includes(text)
+);
+
+displaySubjects(filtered);
+
+}
+
+/* Check login (optional buttons if added later) */
+
+function checkLogin(){
+let isLoggedIn = localStorage.getItem("loggedIn");
+if(isLoggedIn === "true"){
+let loginBtn = document.getElementById("loginBtn");
+let logoutBtn = document.getElementById("logoutBtn");
+if(loginBtn) loginBtn.style.display="none";
+if(logoutBtn) logoutBtn.style.display="block";
+}
+}
+
+checkLogin();
+
+function logoutUser(){
+localStorage.removeItem("loggedIn");
+window.location.href="index.html";
+}
+
+</script>
+
+</body>
+</html>

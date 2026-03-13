@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>NeuroNotes - Home</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins',sans-serif;
+}
+body{
+background:linear-gradient(120deg,#667eea,#764ba2);
+min-height:100vh;
+color:white;
+}
+nav{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:20px 60px;
+}
+.logo{
+font-size:26px;
+font-weight:600;
+}
+nav ul{
+list-style:none;
+display:flex;
+gap:25px;
+align-items:center;
+}
+nav ul li a{
+text-decoration:none;
+color:white;
+font-weight:400;
+}
+.exam-highlight{
+background:#ffcc00;
+color:black !important;
+padding:8px 18px;
+border-radius:25px;
+font-weight:600;
+}
+.hero{
+height:70vh;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+text-align:center;
+}
+.hero h1{
+font-size:55px;
+margin-bottom:20px;
+}
+.hero p{
+font-size:20px;
+margin-bottom:40px;
+opacity:0.9;
+}
+.search-box{
+display:flex;
+background:white;
+border-radius:40px;
+overflow:hidden;
+width:500px;
+box-shadow:0 10px 30px rgba(0,0,0,0.2);
+}
+.search-box input{
+flex:1;
+border:none;
+padding:18px;
+font-size:16px;
+outline:none;
+}
+.search-box button{
+border:none;
+background:#4f46e5;
+color:white;
+padding:18px 30px;
+cursor:pointer;
+}
+.subjects{
+padding:60px;
+}
+.subjects h2{
+text-align:center;
+margin-bottom:40px;
+font-size:32px;
+}
+.subject-grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+gap:30px;
+}
+.subject-card{
+background:rgba(255,255,255,0.1);
+border-radius:20px;
+padding:30px;
+text-align:center;
+backdrop-filter:blur(10px);
+border:1px solid rgba(255,255,255,0.2);
+transition:0.3s;
+cursor:pointer;
+}
+.subject-card:hover{
+transform:translateY(-10px);
+background:rgba(255,255,255,0.2);
+}
+footer{
+text-align:center;
+padding:20px;
+opacity:0.8;
+}
+</style>
+</head>
+<body>
+<nav>
+<div class="logo">NeuroNotes</div>
+<ul>
+<li><a href="index.html">Home</a></li>
+<li><a href="dashboard2.html">Dashboard</a></li>
+<li><a href="subject2.html">Subjects</a></li>
+<li><a href="upload.html">Upload</a></li>
+<li><a href="resource.html">Resources</a></li>
+<li><a href="exam-mode.html" id="examModeBtn" class="exam-highlight" style="display:none;">Exam Mode</a></li>
+<li><a href="signup.html" id="loginBtn">Login</a></li>
+<li><a href="#" id="logoutBtn" style="display:none;" onclick="logoutUser()">Logout</a></li>
+</ul>
+</nav>
+<section class="hero">
+<h1>Find Study Resources Instantly</h1>
+<p>Notes • PPTs • Previous Papers • Study Materials</p>
+<div class="search-box">
+<input type="text" id="searchInput" placeholder="Search notes, PPTs, question papers">
+<button onclick="searchSubjects()">Search</button>
+</div>
+</section>
+<section class="subjects">
+<h2>Available Subjects</h2>
+<div class="subject-grid" id="subjectContainer">
+</div>
+</section>
+
+<section class="subjects">
+<h2>Available Resources</h2>
+<div class="subject-grid" id="resourceContainer">
+</div>
+</section>
+
+<section class="subjects">
+<h2>Important resources (curated links)</h2>
+<p style="text-align:center; opacity:0.9; margin-bottom:20px;">Useful websites for study. Click to open.</p>
+<div class="subject-grid" id="importantResourcesContainer"></div>
+</section>
+<footer>
+<p>© 2026 NeuroNotes</p>
+</footer>
+<script>
+var API_BASE = "http://localhost:4001";
+var importantResourcesLinks = [
+  { title: "DBMS - GeeksforGeeks", subject: "DBMS", link: "https://www.geeksforgeeks.org/dbms/" },
+  { title: "DBMS - TutorialsPoint", subject: "DBMS", link: "https://www.tutorialspoint.com/dbms/index.htm" },
+  { title: "Python - Official Docs", subject: "Python", link: "https://docs.python.org/3/" },
+  { title: "Python - W3Schools", subject: "Python", link: "https://www.w3schools.com/python/" },
+  { title: "Machine Learning - GeeksforGeeks", subject: "ML", link: "https://www.geeksforgeeks.org/machine-learning/" },
+  { title: "Web - MDN Docs", subject: "Web", link: "https://developer.mozilla.org/en-US/docs/Web" },
+  { title: "W3Schools - HTML/CSS/JS", subject: "Web", link: "https://www.w3schools.com/" }
+];
+let demoResources = [
+{title:"DBMS Notes Unit 1",subject:"DBMS",type:"notes"},
+{title:"SQL Queries PPT",subject:"DBMS",type:"ppt"},
+{title:"Python Basics",subject:"Python Programming",type:"notes"},
+{title:"Machine Learning Intro",subject:"Machine Learning",type:"notes"},
+{title:"HTML CSS Notes",subject:"Web Technology",type:"notes"}
+];
+let resources = [];
+let subjects = [];
+let container = document.getElementById("subjectContainer");
+let resourceContainer = document.getElementById("resourceContainer");
+function displaySubjects(list){
+container.innerHTML="";
+list.forEach(subject => {
+let card=document.createElement("div");
+card.className="subject-card";
+card.innerText=subject;
+card.onclick=function(){
+localStorage.setItem("selectedSubject",subject);
+window.location.href="subject2.html";
+};
+container.appendChild(card);
+});
+}
+function renderResources(list){
+resourceContainer.innerHTML = "";
+if(!list.length){
+resourceContainer.innerHTML = '<p style="grid-column:1 / -1; text-align:center; opacity:0.9;">No resources uploaded yet.</p>';
+return;
+}
+list.forEach(r => {
+let card = document.createElement("div");
+card.className = "subject-card";
+let typeLabel = r.type ? r.type.toUpperCase() : "RESOURCE";
+let fileLabel = r.fileName ? ("File: " + r.fileName) : "";
+var hasServerFile = r.id && r.fileName;
+var fileUrl = hasServerFile ? (API_BASE + "/api/files/" + encodeURIComponent(r.fileName)) : "";
+var actions = "";
+if(hasServerFile) actions = "<br><a href=\"" + fileUrl + "\" target=\"_blank\" style=\"font-size:12px; color:#c7d2fe;\">View</a> | <a href=\"" + fileUrl + "?download=1\" target=\"_blank\" style=\"font-size:12px; color:#c7d2fe;\">Download</a>";
+else if(r.link) actions = "<br><a href=\"" + r.link + "\" target=\"_blank\" style=\"font-size:12px; color:#c7d2fe;\">Open link</a>";
+card.innerHTML =
+"<strong>" + (r.title || "Untitled resource") + "</strong>" +
+"<br><span style='font-size:14px; opacity:0.9;'>" +
+(r.subject || "No subject") + " • " + typeLabel +
+"</span>" +
+(fileLabel ? "<br><span style='font-size:13px; opacity:0.85;'>" + fileLabel + "</span>" : "") + actions;
+card.style.cursor = "default";
+resourceContainer.appendChild(card);
+});
+}
+function renderImportantResources(){
+var el = document.getElementById("importantResourcesContainer");
+if(!el) return;
+el.innerHTML = "";
+importantResourcesLinks.forEach(function(r){
+var card = document.createElement("div");
+card.className = "subject-card";
+card.style.cursor = "pointer";
+card.innerHTML = "<strong>" + r.title + "</strong><br><span style='font-size:14px; opacity:0.9;'>" + r.subject + " • Link</span><br><span style='font-size:12px; opacity:0.85;'>Click to open</span>";
+card.onclick = function(){ window.open(r.link,"_blank"); };
+el.appendChild(card);
+});
+}
+renderImportantResources();
+function refreshFromStorage(){
+let stored = JSON.parse(localStorage.getItem("resources")) || [];
+resources = stored.length ? stored : demoResources;
+subjects = [...new Set(resources.map(r => r.subject))];
+displaySubjects(subjects);
+renderResources(resources);
+}
+refreshFromStorage();
+fetch(API_BASE + "/api/resources").then(function(r){ return r.ok ? r.json() : []; }).then(function(rows){
+if(rows && Array.isArray(rows) && rows.length >= 0){ localStorage.setItem("resources", JSON.stringify(rows)); refreshFromStorage(); }
+}).catch(function(){});
+function searchSubjects(){
+let text=document.getElementById("searchInput").value.toLowerCase();
+let filtered=subjects.filter(sub =>
+sub.toLowerCase().includes(text)
+);
+displaySubjects(filtered);
+}
+function checkLogin(){
+let isLoggedIn = localStorage.getItem("loggedIn");
+if(isLoggedIn === "true"){
+let loginBtn = document.getElementById("loginBtn");
+let logoutBtn = document.getElementById("logoutBtn");
+let examBtn = document.getElementById("examModeBtn");
+if(loginBtn) loginBtn.style.display="none";
+if(logoutBtn) logoutBtn.style.display="block";
+if(examBtn) examBtn.style.display="block";
+}else{
+let loginBtn = document.getElementById("loginBtn");
+let logoutBtn = document.getElementById("logoutBtn");
+let examBtn = document.getElementById("examModeBtn");
+if(loginBtn) loginBtn.style.display="block";
+if(logoutBtn) logoutBtn.style.display="none";
+if(examBtn) examBtn.style.display="none";
+}
+}
+checkLogin();
+function logoutUser(){
+localStorage.removeItem("loggedIn");
+window.location.href="index.html";
+}
+</script>
+</body>
+</html>

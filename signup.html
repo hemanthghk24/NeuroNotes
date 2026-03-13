@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>NeuroNotes - Authentication</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&family=Roboto&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins','Roboto',sans-serif;
+}
+
+body{
+min-height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+background:linear-gradient(135deg,#667eea,#764ba2);
+padding:40px;
+overflow-y:auto;
+}
+
+.wrapper{
+display:flex;
+width:900px;
+background:white;
+border-radius:12px;
+overflow:hidden;
+box-shadow:0 20px 40px rgba(0,0,0,0.2);
+}
+
+.brand{
+flex:1;
+background:#4f46e5;
+color:white;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+padding:40px;
+text-align:center;
+}
+
+.brand h1{
+font-size:32px;
+margin-bottom:10px;
+}
+
+.brand p{
+opacity:0.9;
+}
+
+.forms{
+flex:1;
+padding:40px;
+display:flex;
+flex-direction:column;
+justify-content:center;
+}
+
+h2{
+margin-bottom:10px;
+}
+
+.subtitle{
+color:#666;
+margin-bottom:20px;
+}
+
+input, select{
+width:100%;
+padding:11px;
+margin-bottom:10px;
+border:1px solid #ddd;
+border-radius:6px;
+font-size:14px;
+}
+
+input:focus, select:focus{
+outline:none;
+border-color:#4f46e5;
+}
+
+.error{
+color:red;
+font-size:12px;
+margin-bottom:10px;
+}
+
+button{
+width:100%;
+padding:12px;
+background:#4f46e5;
+border:none;
+color:white;
+border-radius:6px;
+font-size:15px;
+cursor:pointer;
+}
+
+button:hover{
+background:#4338ca;
+}
+
+.switch{
+margin-top:15px;
+text-align:center;
+font-size:14px;
+}
+
+.switch a{
+color:#4f46e5;
+cursor:pointer;
+text-decoration:none;
+}
+
+.form{
+display:none;
+}
+
+.form.active{
+display:block;
+}
+
+.password-box{
+position:relative;
+}
+
+.password-box span{
+position:absolute;
+right:10px;
+top:10px;
+cursor:pointer;
+font-size:13px;
+color:#4f46e5;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="wrapper">
+
+<div class="brand">
+
+<h1>NeuroNotes</h1>
+
+<p>
+Discover notes, PPTs, videos and prepare smarter.
+</p>
+
+</div>
+
+<div class="forms">
+
+<!-- LOGIN -->
+
+<div id="loginForm" class="form active">
+
+<h2>Welcome Back</h2>
+<p class="subtitle">Login to continue</p>
+
+<input id="loginEmail" placeholder="Email">
+<div id="loginEmailError" class="error"></div>
+
+<div class="password-box">
+<input id="loginPassword" type="password" placeholder="Password">
+<span onclick="togglePassword('loginPassword')">Show</span>
+</div>
+
+<div id="loginPasswordError" class="error"></div>
+
+<button onclick="validateLogin()">Login</button>
+
+<p class="switch">
+Don't have an account?
+<a onclick="showSignup()">Sign Up</a>
+</p>
+
+</div>
+
+<!-- SIGNUP -->
+
+<div id="signupForm" class="form">
+
+<h2>Create Account</h2>
+<p class="subtitle">Start your study journey</p>
+
+<input id="name" placeholder="Full Name">
+<div id="nameError" class="error"></div>
+
+<input id="email" placeholder="Email">
+<div id="emailError" class="error"></div>
+
+<div class="password-box">
+<input id="password" type="password" placeholder="Password">
+<span onclick="togglePassword('password')">Show</span>
+</div>
+
+<div id="passwordError" class="error"></div>
+
+<input id="confirmPassword" type="password" placeholder="Confirm Password">
+<div id="confirmError" class="error"></div>
+
+<input id="department" placeholder="Department">
+<div id="deptError" class="error"></div>
+
+<select id="semester">
+<option value="">Select Semester</option>
+<option>1</option>
+<option>2</option>
+<option>3</option>
+<option>4</option>
+<option>5</option>
+<option>6</option>
+<option>7</option>
+<option>8</option>
+</select>
+
+<div id="semError" class="error"></div>
+
+<button onclick="validateSignup()">Register</button>
+
+<p class="switch">
+Already have account?
+<a onclick="showLogin()">Login</a>
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+/* Switch Forms */
+
+function showSignup(){
+document.getElementById("loginForm").classList.remove("active")
+document.getElementById("signupForm").classList.add("active")
+}
+
+function showLogin(){
+document.getElementById("signupForm").classList.remove("active")
+document.getElementById("loginForm").classList.add("active")
+}
+
+/* Email Validation */
+
+function validEmail(email){
+const pattern=/^[^\s@]+@[^\s@]+\.[^\s@]+$/
+return pattern.test(email)
+}
+
+/* Toggle Password */
+
+function togglePassword(id){
+
+const field=document.getElementById(id)
+
+if(field.type==="password"){
+field.type="text"
+}else{
+field.type="password"
+}
+
+}
+
+/* SIGNUP */
+
+function validateSignup(){
+
+let valid=true
+document.querySelectorAll(".error").forEach(e=>e.innerText="")
+
+const name=document.getElementById("name").value.trim()
+const email=document.getElementById("email").value.trim()
+const password=document.getElementById("password").value
+const confirm=document.getElementById("confirmPassword").value
+const dept=document.getElementById("department").value.trim()
+const sem=document.getElementById("semester").value
+
+if(name.length<3){
+document.getElementById("nameError").innerText="Name must be at least 3 characters"
+valid=false
+}
+
+if(!validEmail(email)){
+document.getElementById("emailError").innerText="Enter valid email"
+valid=false
+}
+
+if(password.length<6){
+document.getElementById("passwordError").innerText="Password must be at least 6 characters"
+valid=false
+}
+
+if(password!==confirm){
+document.getElementById("confirmError").innerText="Passwords do not match"
+valid=false
+}
+
+if(dept===""){
+document.getElementById("deptError").innerText="Department required"
+valid=false
+}
+
+if(sem===""){
+document.getElementById("semError").innerText="Please select semester"
+valid=false
+}
+
+if(valid){
+  var payload = { name:name, email:email, password:password, department:dept, semester:sem };
+  fetch("http://localhost:4001/api/auth/signup",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify(payload)
+  })
+  .then(function(res) {
+    if(!res.ok) return res.json().catch(function(){ return {}; }).then(function(e){ throw new Error(e.error || "Signup failed"); });
+    return res.json();
+  })
+  .then(function() {
+    alert("Signup successful");
+    showLogin();
+  })
+  .catch(function(err) {
+    var user = { name:name, email:email, password:password, department:dept, semester:sem };
+    localStorage.setItem("user", JSON.stringify(user));
+    alert("Backend unreachable. Account saved locally. Start backend (npm start in backend folder) to sync.");
+    showLogin();
+  });
+}
+
+}
+
+/* LOGIN */
+
+function validateLogin(){
+
+const email=document.getElementById("loginEmail").value
+const password=document.getElementById("loginPassword").value
+
+fetch("http://localhost:4001/api/auth/login",{
+  method:"POST",
+  headers:{"Content-Type":"application/json"},
+  body:JSON.stringify({email:email,password:password})
+})
+.then(function(res) {
+  if(!res.ok) return res.json().catch(function(){ return {}; }).then(function(e){ throw new Error(e.error || "Login failed"); });
+  return res.json();
+})
+.then(function(user) {
+  localStorage.setItem("user", JSON.stringify(user));
+  localStorage.setItem("loggedIn", "true");
+  alert("Login successful");
+  window.location.href="index.html";
+})
+.catch(function(err) {
+  var stored = JSON.parse(localStorage.getItem("user"));
+  if(stored && stored.email === email && stored.password === password){
+    localStorage.setItem("user", JSON.stringify(stored));
+    localStorage.setItem("loggedIn", "true");
+    alert("Login successful (offline mode). Start backend to sync with server.");
+    window.location.href="index.html";
+  } else {
+    alert(err.message || "Invalid email or password");
+  }
+});
+
+}
+
+</script>
+
+</body>
+</html>
