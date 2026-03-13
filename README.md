@@ -68,7 +68,7 @@ README.md
 
 Getting Started
 1️⃣ Clone the repository
-git clone https://github.com/yourusername/neurornotes.git
+git clone https://github.com/hemanthghk24/neurornotes.git
 cd neurornotes
 2️⃣ Install dependencies
 npm install
